@@ -1,10 +1,11 @@
-# 리눅스 iptables 설치 가이드
+# 리눅스 iptables 설치 및 설정 가이드
 
 iptables는 리눅스 커널의 netfilter 프레임워크를 관리하는 강력한 방화벽 도구입니다. 대부분의 리눅스 배포판에 기본으로 포함되어 있습니다.
 
 ## Ubuntu/Debian 계열
 
 ### 설치 확인 및 설치
+
 ```bash
 # iptables 설치 확인
 iptables --version
@@ -21,6 +22,7 @@ sudo apt install ip6tables-persistent
 ```
 
 ### 서비스 관리
+
 ```bash
 # netfilter-persistent 서비스 활성화
 sudo systemctl enable netfilter-persistent
@@ -35,6 +37,7 @@ sudo netfilter-persistent reload
 ## CentOS/RHEL/Fedora 계열
 
 ### CentOS/RHEL 7 이하
+
 ```bash
 # iptables 설치 (보통 기본 설치됨)
 sudo yum install iptables iptables-services
@@ -54,6 +57,7 @@ sudo systemctl start ip6tables
 ```
 
 ### CentOS/RHEL 8+ / Fedora
+
 ```bash
 # iptables 설치
 sudo dnf install iptables iptables-services
@@ -85,6 +89,7 @@ sudo systemctl start ip6tables
 ## 기본 사용법
 
 ### 현재 규칙 확인
+
 ```bash
 # 모든 규칙 확인
 sudo iptables -L
@@ -102,6 +107,7 @@ sudo iptables -L FORWARD
 ```
 
 ### 기본 정책 설정
+
 ```bash
 # 기본 정책 설정 (주의: SSH 연결 끊어질 수 있음)
 sudo iptables -P INPUT DROP
@@ -113,6 +119,7 @@ sudo iptables -L | grep policy
 ```
 
 ### 기본 규칙 설정
+
 ```bash
 # 로컬 루프백 허용
 sudo iptables -A INPUT -i lo -j ACCEPT
@@ -132,6 +139,7 @@ sudo iptables -A INPUT -p tcp --dport 443 -j ACCEPT
 ## 규칙 관리
 
 ### 규칙 추가
+
 ```bash
 # 특정 포트 허용
 sudo iptables -A INPUT -p tcp --dport 8080 -j ACCEPT
@@ -151,6 +159,7 @@ sudo iptables -A INPUT -s 192.168.1.0/24 -j ACCEPT
 ```
 
 ### 규칙 삽입
+
 ```bash
 # 특정 위치에 규칙 삽입
 sudo iptables -I INPUT 1 -s 192.168.1.100 -j ACCEPT
@@ -160,6 +169,7 @@ sudo iptables -I INPUT -p tcp --dport 80 -j ACCEPT
 ```
 
 ### 규칙 삭제
+
 ```bash
 # 라인 번호로 삭제
 sudo iptables -L INPUT --line-numbers
@@ -178,6 +188,7 @@ sudo iptables -F
 ```
 
 ### 규칙 교체
+
 ```bash
 # 특정 라인의 규칙 교체
 sudo iptables -R INPUT 2 -s 192.168.1.200 -j DROP
@@ -186,6 +197,7 @@ sudo iptables -R INPUT 2 -s 192.168.1.200 -j DROP
 ## 고급 규칙 설정
 
 ### 연결 상태 기반 필터링
+
 ```bash
 # 새로운 연결만 허용
 sudo iptables -A INPUT -p tcp --dport 80 -m state --state NEW -j ACCEPT
@@ -198,6 +210,7 @@ sudo iptables -A INPUT -m state --state INVALID -j DROP
 ```
 
 ### 시간 기반 규칙
+
 ```bash
 # 특정 시간대만 허용
 sudo iptables -A INPUT -p tcp --dport 80 -m time --timestart 09:00 --timestop 18:00 -j ACCEPT
@@ -207,6 +220,7 @@ sudo iptables -A INPUT -p tcp --dport 22 -m time --weekdays Mon,Tue,Wed,Thu,Fri 
 ```
 
 ### 연결 제한
+
 ```bash
 # 동시 연결 수 제한
 sudo iptables -A INPUT -p tcp --dport 80 -m connlimit --connlimit-above 10 -j REJECT
@@ -217,6 +231,7 @@ sudo iptables -A INPUT -p tcp --dport 22 -j DROP
 ```
 
 ### MAC 주소 기반 필터링
+
 ```bash
 # 특정 MAC 주소 허용
 sudo iptables -A INPUT -m mac --mac-source 00:11:22:33:44:55 -j ACCEPT
@@ -228,6 +243,7 @@ sudo iptables -A INPUT -m mac --mac-source ! 00:11:22:33:44:55 -j DROP
 ## NAT 설정
 
 ### SNAT (Source NAT)
+
 ```bash
 # 특정 네트워크의 나가는 트래픽 변환
 sudo iptables -t nat -A POSTROUTING -s 192.168.1.0/24 -o eth0 -j SNAT --to-source 203.0.113.1
@@ -237,6 +253,7 @@ sudo iptables -t nat -A POSTROUTING -s 192.168.1.0/24 -o eth0 -j MASQUERADE
 ```
 
 ### DNAT (Destination NAT)
+
 ```bash
 # 포트 포워딩
 sudo iptables -t nat -A PREROUTING -p tcp --dport 8080 -j DNAT --to-destination 192.168.1.100:80
@@ -248,6 +265,7 @@ sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j DNAT --to-destination 19
 ## 로깅 설정
 
 ### 기본 로깅
+
 ```bash
 # 특정 규칙에 로깅 추가
 sudo iptables -A INPUT -p tcp --dport 22 -j LOG --log-prefix "SSH_ACCESS: "
@@ -259,6 +277,7 @@ sudo iptables -A INPUT -j DROP
 ```
 
 ### 로그 확인
+
 ```bash
 # 시스템 로그에서 iptables 로그 확인
 sudo tail -f /var/log/messages | grep iptables
@@ -272,6 +291,7 @@ sudo dmesg | grep iptables
 ## 규칙 저장 및 복원
 
 ### Ubuntu/Debian
+
 ```bash
 # 현재 규칙 저장
 sudo iptables-save > /etc/iptables/rules.v4
@@ -286,6 +306,7 @@ sudo netfilter-persistent reload
 ```
 
 ### CentOS/RHEL/Fedora
+
 ```bash
 # 규칙 저장
 sudo service iptables save
@@ -301,6 +322,7 @@ sudo iptables-restore < /etc/sysconfig/iptables
 ## 실전 설정 예제
 
 ### 웹서버 설정
+
 ```bash
 #!/bin/bash
 # 웹서버용 iptables 설정
@@ -340,6 +362,7 @@ iptables-save > /etc/iptables/rules.v4
 ```
 
 ### 라우터/게이트웨이 설정
+
 ```bash
 #!/bin/bash
 # 라우터용 iptables 설정
@@ -377,6 +400,7 @@ iptables -A INPUT -p udp --sport 68 --dport 67 -j ACCEPT
 ```
 
 ### 데이터베이스 서버 설정
+
 ```bash
 #!/bin/bash
 # DB 서버용 iptables 설정
@@ -408,6 +432,7 @@ iptables -A INPUT -s 192.168.1.200 -p tcp --dport 9100 -j ACCEPT
 ## 보안 강화 설정
 
 ### DDoS 방어
+
 ```bash
 # SYN Flood 방어
 iptables -A INPUT -p tcp --syn -m limit --limit 1/s --limit-burst 3 -j ACCEPT
@@ -424,6 +449,7 @@ iptables -A INPUT -p tcp -m tcp --dport 139 -m recent --name portscan --set -j D
 ```
 
 ### 스푸핑 방어
+
 ```bash
 # IP 스푸핑 방어
 iptables -A INPUT -s 10.0.0.0/8 -i eth0 -j DROP
@@ -436,6 +462,7 @@ iptables -A INPUT -s 240.0.0.0/5 -i eth0 -j DROP
 ## 문제 해결
 
 ### 긴급 복구
+
 ```bash
 # 모든 규칙 제거 (긴급시)
 sudo iptables -F
@@ -450,6 +477,7 @@ sudo iptables -P FORWARD ACCEPT
 ```
 
 ### 백업 및 복원
+
 ```bash
 # 현재 설정 백업
 sudo iptables-save > /root/iptables-backup-$(date +%Y%m%d).txt
@@ -459,6 +487,7 @@ sudo iptables-restore < /root/iptables-backup-20231201.txt
 ```
 
 ### 규칙 테스트
+
 ```bash
 # 규칙 임시 적용 (재부팅시 사라짐)
 iptables -A INPUT -s 192.168.1.100 -j DROP
@@ -474,6 +503,7 @@ tail -f /var/log/messages | grep iptables
 ## 유용한 스크립트
 
 ### 자동 방화벽 스크립트
+
 ```bash
 #!/bin/bash
 # /usr/local/bin/firewall.sh
@@ -517,6 +547,7 @@ $IPTABLES -L -n -v --line-numbers
 ```
 
 ### 모니터링 스크립트
+
 ```bash
 #!/bin/bash
 # 실시간 연결 모니터링
