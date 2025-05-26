@@ -95,7 +95,7 @@ http:
 - **설정 위치**: `http:` 섹션이 누락된 경우 직접 추가 필요
 
 ### 🔧 문제 해결 단계
-1. 내부 IP 직접 접속 테스트 (`http://192.168.1.105:8123`)
+1. 내부 IP 직접 접속 테스트 (`본인의 HA서버 아이피로 수정하세요.`)
 2. NPM 설정 확인 (Domain, Forward IP/Port)
 3. Home Assistant `trusted_proxies` 설정
 4. Custom Nginx Configuration 적용
