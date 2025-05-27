@@ -1,14 +1,5 @@
 # Kali Linux 새로운 아카이브 서명 키
 
-![Kali Linux Signing Key](https://www.kali.org/blog/new-kali-archive-signing-key/images/new-kali-signing-key.jpg)
-
-## 목차
-- [요약](#요약)
-- [상세 설명](#상세-설명)
-- [해결 방법](#해결-방법)
-- [새로운 시스템 구축](#새로운-시스템-구축)
-- [자주 묻는 질문](#자주-묻는-질문)
-
 ## 요약
 
 **Kali Linux 사용자들에게 나쁜 소식!** 앞으로 며칠 내에 거의 모든 사용자가 `apt update` 실행 시 다음과 같은 오류를 경험하게 됩니다:
